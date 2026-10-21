@@ -87,6 +87,7 @@
         }
     }
     :root {
+        font-family: Consolas;
         font-size: 1rem;
         color: white;
         text-align: center;
