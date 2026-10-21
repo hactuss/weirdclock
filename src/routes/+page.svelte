@@ -42,26 +42,20 @@
     });
 </script>
 
-{#snippet segment_body(progress: number)}
-    <div id="segment">
-        <div id="segment_progress" style="height:{progress}%;"></div>
-    </div>
-{/snippet}
-
-{#snippet segment(name: string, progress: number)}
+{#snippet segment(name: string, progress: number, width: number)}
     <div>
-        {@render segment_body(progress)}
-        <!--<p>{progress}%</p>-->
-        <!--<p>{name}</p>-->
+        <div id="segment" style="width: {width}em;">
+            <div id="segment_progress" style="height:{progress}%;"></div>
+        </div>
     </div>
 {/snippet}
 
 <h1>A weird clock</h1>
 <main>
     <div id="segment_container">
-        {@render segment("hour", progress_hour_combined)}
-        {@render segment("minute", progress_minute_combined)}
-        {@render segment("second", progress_second_combined)}
+        {@render segment("hour", progress_hour_combined, 4)}
+        {@render segment("minute", progress_minute_combined, 2)}
+        {@render segment("second", progress_second_combined, 1)}
     </div>
     <p>{hour}:{minute}:{second}</p>
 </main>
@@ -88,7 +82,7 @@
     }
     :root {
         font-family: monospace;
-        font-size: 1rem;
+        font-size: 1.5rem;
         color: white;
         text-align: center;
     }
@@ -99,8 +93,8 @@
         display: flex;
     }
     #segment {
-        width: 6em;
-        aspect-ratio: 1/1;
+        width: 1em;
+        height: 7em;
         background-color: orange;
         display: flex;
         flex-direction: column-reverse;
