@@ -1,19 +1,18 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { SvelteDate } from "svelte/reactivity";
-
     let date = new SvelteDate();
-    let hour = $state(date.getHours());
-    let minute = $state(date.getMinutes());
-    let second = $state(date.getSeconds());
+    let hour = $state(0);
+    let minute = $state(0);
+    let second = $state(0);
 
-    onMount(() => {
-        const interval = setInterval(() => {
-            console.log(new SvelteDate());
-        }, 1000);
-        return () => clearInterval(interval);
-    });
-
+    function update_time() {
+        const now = new Date();
+        hour = now.getHours();
+        minute = now.getMinutes();
+        second = now.getSeconds();
+    }
+    update_time();
     let hour_max_single_1 = 2;
     let hour_max_single_2 = 3;
     let minute_max_single_1 = 5;
@@ -28,29 +27,48 @@
     let second_max_combined = 59;
     //second_max_single_1 + second_max_single_2
 
-    let progress_hour_combined = (100 / hour_max_combined) * hour;
-    let progress_minute_combined = (100 / minute_max_combined) * minute;
-    let progress_second_combined = (100 / second_max_combined) * second;
+    let progress_hour_combined = $derived((100 / hour_max_combined) * hour);
+    let progress_minute_combined = $derived(
+        (100 / minute_max_combined) * minute,
+    );
+    let progress_second_combined = $derived(
+        (100 / second_max_combined) * second,
+    );
+
+    onMount(() => {
+        update_time();
+        const interval = setInterval(update_time, 1000);
+        return () => clearInterval(interval);
+    });
 </script>
 
-{#snippet segment(name: string, progress: number)}
-    <div>
-        <div id="segment">
-            <div id="segment_progress" style="height:{progress}%;"></div>
-        </div>
-        <p>{progress}%</p>
-        <p>{name}</p>
+{#snippet segment_body(progress: number)}
+    <div id="segment">
+        <div id="segment_progress" style="height:{progress}%;"></div>
     </div>
 {/snippet}
 
-<h1>A weired clock</h1>
+{#snippet segment(name: string, progress: number)}
+    <div>
+        {@render segment_body(progress)}
+        <!--<p>{progress}%</p>-->
+        <!--<p>{name}</p>-->
+    </div>
+{/snippet}
+
+<h1>A weird clock</h1>
 <main>
     <div id="segment_container">
         {@render segment("hour", progress_hour_combined)}
         {@render segment("minute", progress_minute_combined)}
         {@render segment("second", progress_second_combined)}
     </div>
+    <p>{hour}:{minute}:{second}</p>
 </main>
+<br />
+<footer>
+    <a href="https://github.com/hactuss/weirdclock">Github repo</a>
+</footer>
 
 <style lang="scss">
     :global {
@@ -60,28 +78,37 @@
             border: 0;
         }
         html {
-            background-color: lightslategrey;
+            background-color: darkslateblue;
         }
         body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
     }
     :root {
-        font-size: 2rem;
+        font-size: 1rem;
+        color: white;
+        text-align: center;
     }
     button {
         background-color: white;
         padding-inline: 3em;
         padding-block: 1em;
     }
+    a {
+        color: mediumpurple;
+    }
     #segment_container {
         display: flex;
     }
     #segment {
-        width: 2em;
-        height: 4em;
+        width: 6em;
+        aspect-ratio: 1/2;
         background-color: orange;
         display: flex;
         flex-direction: column-reverse;
+        margin: 0.25em;
     }
     #segment_progress {
         background-color: slateblue;
