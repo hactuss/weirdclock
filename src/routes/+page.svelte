@@ -91,11 +91,6 @@
         color: white;
         text-align: center;
     }
-    button {
-        background-color: white;
-        padding-inline: 3em;
-        padding-block: 1em;
-    }
     a {
         color: mediumpurple;
     }
@@ -104,7 +99,7 @@
     }
     #segment {
         width: 6em;
-        aspect-ratio: 1/2;
+        aspect-ratio: 1/1;
         background-color: orange;
         display: flex;
         flex-direction: column-reverse;
