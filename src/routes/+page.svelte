@@ -87,7 +87,7 @@
         }
     }
     :root {
-        font-family: Consolas;
+        font-family: monospace;
         font-size: 1rem;
         color: white;
         text-align: center;
