@@ -86,7 +86,11 @@
         return () => clearInterval(interval);
     });
 
-    function defaultSegmentWidth() {}
+    function defaultSegmentWidth() {
+        hour_width = hour_default_width;
+        minute_width = minute_default_width;
+        second_width = second_default_witdh;
+    }
 </script>
 
 {#snippet segment(progress: number, width: number, time_number: number)}
