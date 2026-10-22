@@ -50,7 +50,6 @@
     </div>
 {/snippet}
 
-<h1>A weird clock</h1>
 <main>
     <div id="segment_container">
         {@render segment("hour", progress_hour_combined, 4)}
