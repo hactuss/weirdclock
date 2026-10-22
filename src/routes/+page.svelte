@@ -175,5 +175,11 @@
         position: absolute;
         bottom: 1em;
         right: 1em;
+        &:hover {
+            color: orange;
+        }
+        &:active {
+            color: white;
+        }
     }
 </style>
