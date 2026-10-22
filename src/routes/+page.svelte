@@ -1,4 +1,5 @@
 <script lang="ts">
+    // made by a human :>
     import { onMount } from "svelte";
     import { SvelteDate } from "svelte/reactivity";
     let date = new SvelteDate();
@@ -6,19 +7,22 @@
     let minute = $state(0);
     let second = $state(0);
 
-    function update_time() {
-        const now = new Date();
-        hour = now.getHours();
-        minute = now.getMinutes();
-        second = now.getSeconds();
-    }
-    update_time();
+    let hour_sg1 = $state(0);
+    let hour_sg2 = $state(0);
+    let minute_sg1 = $state(0);
+    let minute_sg2 = $state(0);
+    let second_sg1 = $state(0);
+    let second_sg2 = $state(0);
+
     let hour_max_single_1 = 2;
-    let hour_max_single_2 = 3;
+    let hour_max_single_2 = 9;
     let minute_max_single_1 = 5;
     let minute_max_single_2 = 9;
     let second_max_single_1 = 5;
     let second_max_single_2 = 9;
+    if (new Date().getHours() >= 20) {
+        hour_max_single_2 = 4;
+    }
 
     let hour_max_combined = 23;
     //hour_max_single_1 + hour_max_single_2
@@ -35,32 +39,92 @@
         (100 / second_max_combined) * second,
     );
 
+    let progress_hour_sg1 = $derived((100 / hour_max_single_1) * hour_sg1);
+    let progress_hour_sg2 = $derived((100 / hour_max_single_2) * hour_sg2);
+
+    let progress_minute_sg1 = $derived(
+        (100 / minute_max_single_1) * minute_sg1,
+    );
+    let progress_minute_sg2 = $derived(
+        (100 / minute_max_single_2) * minute_sg2,
+    );
+    let progress_second_sg1 = $derived(
+        (100 / second_max_single_1) * second_sg1,
+    );
+    let progress_second_sg2 = $derived(
+        (100 / second_max_single_2) * second_sg2,
+    );
+
+    let hour_default_width = 3;
+    let minute_default_width = 2;
+    let second_default_witdh = 1;
+
+    let hour_width = hour_default_width;
+    let minute_width = minute_default_width;
+    let second_width = second_default_witdh;
+    let show_time_per_segment = false;
+    function update_time() {
+        const now = new Date();
+        hour = now.getHours();
+        minute = now.getMinutes();
+        second = now.getSeconds();
+        hour_sg1 = Array.from(String(hour), Number)[0];
+        hour_sg2 = Array.from(String(hour), Number)[1];
+        minute_sg1 = Array.from(String(minute), Number)[0];
+        minute_sg2 = Array.from(String(minute), Number)[1];
+        if (second / 10 < 1) {
+            second_sg1 = 0;
+            second_sg2 = Array.from(String(second), Number)[0];
+        } else {
+            second_sg1 = Array.from(String(second), Number)[0];
+            second_sg2 = Array.from(String(second), Number)[1];
+        }
+    }
     onMount(() => {
         update_time();
         const interval = setInterval(update_time, 1000);
         return () => clearInterval(interval);
     });
+
+    function defaultSegmentWidth() {}
 </script>
 
-{#snippet segment(name: string, progress: number, width: number)}
+{#snippet segment(progress: number, width: number, time_number: number)}
     <div>
         <div id="segment" style="width: {width}em;">
             <div id="segment_progress" style="height:{progress}%;"></div>
         </div>
+        {#if show_time_per_segment}
+            <p style="color: orange">{time_number}</p>
+        {/if}
     </div>
 {/snippet}
-
-<main>
+{#snippet combined_segments()}
     <div id="segment_container">
-        {@render segment("hour", progress_hour_combined, 4)}
-        {@render segment("minute", progress_minute_combined, 2)}
-        {@render segment("second", progress_second_combined, 1)}
+        {@render segment(progress_hour_combined, 4)}
+        {@render segment(progress_minute_combined, 2)}
+        {@render segment(progress_second_combined, 1)}
     </div>
+{/snippet}
+{#snippet singular_segments()}
+    <div id="segment_container">
+        {@render segment(progress_hour_sg1, hour_width, hour_sg1)}
+        {@render segment(progress_hour_sg2, hour_width, hour_sg2)}
+        {@render segment(progress_minute_sg1, minute_width, minute_sg1)}
+        {@render segment(progress_minute_sg2, minute_width, minute_sg2)}
+        {@render segment(progress_second_sg1, second_width, second_sg1)}
+        {@render segment(progress_second_sg2, second_width, second_sg2)}
+    </div>
+{/snippet}
+<main>
     <p>{hour}:{minute}:{second}</p>
+    {@render singular_segments()}
 </main>
 <br />
 <footer>
-    <a href="https://github.com/hactuss/weirdclock">Github repo</a>
+    <a href="https://github.com/hactuss/weirdclock" id="github_repo_link"
+        >Github repo</a
+    >
 </footer>
 
 <style lang="scss">
@@ -102,5 +166,10 @@
     #segment_progress {
         background-color: slateblue;
         width: 100%;
+    }
+    #github_repo_link {
+        position: absolute;
+        bottom: 1em;
+        right: 1em;
     }
 </style>
