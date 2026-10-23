@@ -1,10 +1,10 @@
 <script lang="ts">
     // made by a human :>
 
-/* ToDo: 
+    /* ToDo:
 - Visual division of porgress bar via gradient. (md on phone)
-- show zero for n<10 
-- grey/white upper limit for 1 hour bar that caps at 4 
+- show zero for n<10
+- grey/white upper limit for 1 hour bar that caps at 4
 - make visual division togglable
 */
 
@@ -28,9 +28,10 @@
     let minute_max_single_2 = 9;
     let second_max_single_1 = 5;
     let second_max_single_2 = 9;
+    /*
     if (new Date().getHours() >= 20) {
         hour_max_single_2 = 4;
-    }
+        }*/
 
     let hour_max_combined = 23;
     //hour_max_single_1 + hour_max_single_2
@@ -67,31 +68,33 @@
     let minute_default_width = 2;
     let second_default_witdh = 1;
 
-    let hour_width = hour_default_width;
-    let minute_width = minute_default_width;
-    let second_width = second_default_witdh;
+    let hour_width = $derived(hour_default_width);
+    let minute_width = $derived(minute_default_width);
+    let second_width = $derived(second_default_witdh);
     let show_time_per_segment = false;
+    let segment_division_value = $state(0);
+    let progress_cap = $state(10);
     function update_time() {
         const now = new Date();
         hour = now.getHours();
         minute = now.getMinutes();
         second = now.getSeconds();
 
-		if (hour / 10 < 1){
-  		  	hour_sg1 = 0; 
-        	hour_sg2 = Array.from(String(hour), Number)[0];
-		} else {        
-       	 	hour_sg1 = Array.from(String(hour), Number)[0];
-        	hour_sg2 = Array.from(String(hour), Number)[1];
-    	}
+        if (hour / 10 < 1) {
+            hour_sg1 = 0;
+            hour_sg2 = Array.from(String(hour), Number)[0];
+        } else {
+            hour_sg1 = Array.from(String(hour), Number)[0];
+            hour_sg2 = Array.from(String(hour), Number)[1];
+        }
 
         if (minute / 10 < 1) {
             minute_sg1 = 0;
             minute_sg2 = Array.from(String(minute), Number)[0];
         } else {
-	        minute_sg1 = Array.from(String(minute), Number)[0];
- 	       minute_sg2 = Array.from(String(minute), Number)[1];
-}
+            minute_sg1 = Array.from(String(minute), Number)[0];
+            minute_sg2 = Array.from(String(minute), Number)[1];
+        }
         if (second / 10 < 1) {
             second_sg1 = 0;
             second_sg2 = Array.from(String(second), Number)[0];
@@ -99,6 +102,7 @@
             second_sg1 = Array.from(String(second), Number)[0];
             second_sg2 = Array.from(String(second), Number)[1];
         }
+        console.log(progress_second_sg2);
     }
     onMount(() => {
         update_time();
@@ -113,16 +117,6 @@
     }
 </script>
 
-{#snippet segment(progress: number, width: number, time_number: number)}
-    <div>
-        <div id="segment" style="width: {width}em;">
-            <div id="segment_progress" style="height:{progress}%;"></div>
-        </div>
-        {#if show_time_per_segment}
-            <p style="color: orange">{time_number}</p>
-        {/if}
-    </div>
-{/snippet}
 {#snippet combined_segments()}
     <div id="segment_container">
         {@render segment(progress_hour_combined, 4)}
@@ -130,14 +124,65 @@
         {@render segment(progress_second_combined, 1)}
     </div>
 {/snippet}
+
+{#snippet segment(
+    progress: number,
+    width: number,
+    time_number: number,
+    seperator_value: number,
+)}
+    <div>
+        <div id="segment" style="width: {width}em;" style:--n={seperator_value}>
+            <div id="segment_progress" style="height:{progress}%;"></div>
+            <div
+                id="segment_progress_cap"
+                style="height: {progress_cap}%;"
+            ></div>
+        </div>
+        {#if show_time_per_segment}
+            <p style="color: orange">{time_number}</p>
+        {/if}
+    </div>
+{/snippet}
+
 {#snippet singular_segments()}
     <div id="segment_container">
-        {@render segment(progress_hour_sg1, hour_width, hour_sg1)}
-        {@render segment(progress_hour_sg2, hour_width, hour_sg2)}
-        {@render segment(progress_minute_sg1, minute_width, minute_sg1)}
-        {@render segment(progress_minute_sg2, minute_width, minute_sg2)}
-        {@render segment(progress_second_sg1, second_width, second_sg1)}
-        {@render segment(progress_second_sg2, second_width, second_sg2)}
+        {@render segment(
+            progress_hour_sg1,
+            hour_width,
+            hour_sg1,
+            hour_max_single_1,
+        )}
+        {@render segment(
+            progress_hour_sg2,
+            hour_width,
+            hour_sg2,
+            hour_max_single_2,
+        )}
+        {@render segment(
+            progress_minute_sg1,
+            minute_width,
+            minute_sg1,
+            minute_max_single_1,
+        )}
+        {@render segment(
+            progress_minute_sg2,
+            minute_width,
+            minute_sg2,
+            minute_max_single_2,
+        )}
+        {@render segment(
+            progress_second_sg1,
+            second_width,
+            second_sg1,
+            second_max_single_1,
+        )}
+        {@render segment(
+            progress_second_sg2,
+            second_width,
+            second_sg2,
+            second_max_single_2,
+        )}
     </div>
 {/snippet}
 <main>
@@ -191,6 +236,11 @@
         background-color: slateblue;
         width: 100%;
     }
+    #segment_progress_cap {
+        background-color: grey;
+        width: 100%;
+        justify-self: right;
+    }
     #github_repo_link {
         position: absolute;
         bottom: 1em;
@@ -201,5 +251,19 @@
         &:active {
             color: white;
         }
+    }
+    #segment {
+        --n: 9;
+        --line: 1px;
+        --color: white;
+
+        background: repeating-linear-gradient(
+            to top,
+            transparent 0,
+            transparent calc(100% / var(--n) - var(--line)),
+            var(--color) calc(100% / var(--n) - var(--line)),
+            var(--color) calc(100% / var(--n))
+        );
+        background-color: orange;
     }
 </style>
