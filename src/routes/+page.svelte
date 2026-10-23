@@ -50,7 +50,6 @@
 
     let progress_hour_sg1 = $derived((100 / hour_max_single_1) * hour_sg1);
     let progress_hour_sg2 = $derived((100 / hour_max_single_2) * hour_sg2);
-
     let progress_minute_sg1 = $derived(
         (100 / minute_max_single_1) * minute_sg1,
     );
@@ -73,7 +72,10 @@
     let second_width = $derived(second_default_witdh);
     let show_time_per_segment = false;
     let segment_division_value = $state(0);
-    let progress_cap = $state(10);
+    let progress_cap_at_20 = $state(0);
+    if (new Date().getHours() >= 20) {
+        progress_cap_at_20 = (100 / hour_max_single_2) * 6;
+    }
     function update_time() {
         const now = new Date();
         hour = now.getHours();
@@ -87,7 +89,6 @@
             hour_sg1 = Array.from(String(hour), Number)[0];
             hour_sg2 = Array.from(String(hour), Number)[1];
         }
-
         if (minute / 10 < 1) {
             minute_sg1 = 0;
             minute_sg2 = Array.from(String(minute), Number)[0];
@@ -102,7 +103,6 @@
             second_sg1 = Array.from(String(second), Number)[0];
             second_sg2 = Array.from(String(second), Number)[1];
         }
-        console.log(progress_second_sg2);
     }
     onMount(() => {
         update_time();
@@ -130,6 +130,7 @@
     width: number,
     time_number: number,
     seperator_value: number,
+    progress_cap: number,
 )}
     <div>
         <div id="segment" style="width: {width}em;" style:--n={seperator_value}>
@@ -158,6 +159,7 @@
             hour_width,
             hour_sg2,
             hour_max_single_2,
+            progress_cap_at_20,
         )}
         {@render segment(
             progress_minute_sg1,
@@ -231,6 +233,7 @@
         display: flex;
         flex-direction: column-reverse;
         margin: 0.25em;
+        justify-content: space-between;
     }
     #segment_progress {
         background-color: slateblue;
@@ -239,7 +242,6 @@
     #segment_progress_cap {
         background-color: grey;
         width: 100%;
-        justify-self: right;
     }
     #github_repo_link {
         position: absolute;
