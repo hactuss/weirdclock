@@ -68,10 +68,22 @@
         hour = now.getHours();
         minute = now.getMinutes();
         second = now.getSeconds();
-        hour_sg1 = Array.from(String(hour), Number)[0];
-        hour_sg2 = Array.from(String(hour), Number)[1];
-        minute_sg1 = Array.from(String(minute), Number)[0];
-        minute_sg2 = Array.from(String(minute), Number)[1];
+
+		if (hour / 10 < 1){
+  		  	hour_sg1 = 0; 
+        	hour_sg2 = Array.from(String(hour), Number)[0];
+		} else {        
+       	 	hour_sg1 = Array.from(String(hour), Number)[0];
+        	hour_sg2 = Array.from(String(hour), Number)[1];
+    	}
+
+        if (minute / 10 < 1) {
+            minute_sg1 = 0;
+            minute_sg2 = Array.from(String(minute), Number)[0];
+        } else {
+	        minute_sg1 = Array.from(String(minute), Number)[0];
+ 	       minute_sg2 = Array.from(String(minute), Number)[1];
+}
         if (second / 10 < 1) {
             second_sg1 = 0;
             second_sg2 = Array.from(String(second), Number)[0];
