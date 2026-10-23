@@ -76,11 +76,31 @@
     if (new Date().getHours() >= 20) {
         progress_cap_at_20 = (100 / hour_max_single_2) * 6;
     }
+    let hour_display = $state(hour);
+    let minute_display = $state(minute);
+    let second_display = $state(second);
+
     function update_time() {
         const now = new Date();
         hour = now.getHours();
         minute = now.getMinutes();
         second = now.getSeconds();
+
+        if (hour < 10) {
+            hour_display = "0" + hour;
+        } else {
+            hour_display = hour;
+        }
+        if (minute < 10) {
+            minute_display = "0" + minute;
+        } else {
+            minute_display = minute;
+        }
+        if (second < 10) {
+            second_display = "0" + second;
+        } else {
+            second_display = second;
+        }
 
         if (hour / 10 < 1) {
             hour_sg1 = 0;
@@ -188,7 +208,7 @@
     </div>
 {/snippet}
 <main>
-    <p>{hour}:{minute}:{second}</p>
+    <p>{hour_display}:{minute_display}:{second_display}</p>
     {@render singular_segments()}
 </main>
 <br />
