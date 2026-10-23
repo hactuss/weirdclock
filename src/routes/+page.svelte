@@ -258,14 +258,16 @@
         --n: 9;
         --line: 1px;
         --color: white;
-
-        background: repeating-linear-gradient(
-            to top,
-            transparent 0,
-            transparent calc(100% / var(--n) - var(--line)),
-            var(--color) calc(100% / var(--n) - var(--line)),
-            var(--color) calc(100% / var(--n))
-        );
+        --bg: orange;
+        background:
+            linear-gradient(var(--bg) 0 0) top / 100% var(--line) no-repeat,
+            repeating-linear-gradient(
+                to top,
+                transparent 0,
+                transparent calc(100% / var(--n) - var(--line)),
+                var(--color) calc(100% / var(--n) - var(--line)),
+                var(--color) calc(100% / var(--n))
+            );
         background-color: orange;
     }
 </style>
