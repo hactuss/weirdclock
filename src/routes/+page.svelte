@@ -3,7 +3,7 @@
 
     /* ToDo:
 -[x] Visual division of porgress bar via gradient. (md on phone)
--[] show zero for n<10
+-[x] show zero for n<10
 -[x] grey/white upper limit for 1 hour bar that caps at 4
 -[-] make visual division togglable
 */
